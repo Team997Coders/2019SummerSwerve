@@ -3,8 +3,10 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
+import frc.robot.commands.UpdateModule;
 import frc.robot.subsystems.modules.ProtoModule;
 
 /**
@@ -21,12 +23,20 @@ public class SwerveDrive extends Subsystem {
 
     modules = new ProtoModule[4];
 
-    modules[0] = new ProtoModule(RobotMap.Ports.FrontRightAzi, RobotMap.Ports.FrontRightDrive);
-    modules[0] = new ProtoModule(RobotMap.Ports.FrontLeftAzi, RobotMap.Ports.FrontLeftDrive);
-    modules[0] = new ProtoModule(RobotMap.Ports.BackLeftAzi, RobotMap.Ports.BackLeftDrive);
-    modules[0] = new ProtoModule(RobotMap.Ports.BackRightAzi, RobotMap.Ports.BackRightDrive);
+    modules[0] = new ProtoModule(RobotMap.Ports.FrontRightAzi, RobotMap.Ports.FrontRightDrive, RobotMap.Ports.FrontRightEncoder, RobotMap.Ports.FrontRightZero);
+    modules[0] = new ProtoModule(RobotMap.Ports.FrontLeftAzi, RobotMap.Ports.FrontLeftDrive, RobotMap.Ports.FrontLeftEncoder, RobotMap.Ports.FrontLeftZero);
+    modules[0] = new ProtoModule(RobotMap.Ports.BackLeftAzi, RobotMap.Ports.BackLeftDrive, RobotMap.Ports.BackLeftEncoder, RobotMap.Ports.BackLeftZero);
+    modules[0] = new ProtoModule(RobotMap.Ports.BackRightAzi, RobotMap.Ports.BackRightDrive, RobotMap.Ports.BackRightEncoder, RobotMap.Ports.BackRightZero);
+
+    Scheduler.getInstance().add(new UpdateModule(0));
+    Scheduler.getInstance().add(new UpdateModule(1));
+    Scheduler.getInstance().add(new UpdateModule(2));
+    Scheduler.getInstance().add(new UpdateModule(3));
   }
 
+  /**
+   * Basically 95% stolen from Jack In The Bot
+   */
   public void SwerveMixer(double forward, double strafe, double rotation, boolean isFieldOriented) {
     if (isFieldOriented) {
       double angleRad = Math.toRadians(getGyroAngle());
@@ -56,9 +66,9 @@ public class SwerveDrive extends Subsystem {
 
     for (int i = 0; i < 4; i++) {
       if (Math.abs(forward) > 0.05 || Math.abs(strafe) > 0.05 || Math.abs(rotation) > 0.05) {
-        modules[i].setAzimuthAngle(angles[i] + 180);
+        modules[i].setTargetAngle(angles[i]);
       } else {
-        modules[i].setAzimuthAngle(modules[i].getTargetAngle());
+        modules[i].setTargetAngle(modules[i].getTargetAngle());
       }
       modules[i].setTargetSpeed(speeds[i]);
     }
@@ -71,6 +81,17 @@ public class SwerveDrive extends Subsystem {
       angle += 360;
 
     return angle;
+  }
+
+  public double getGyroAngle() {
+    double a = navx.getAngle();
+    while (a < 0) a += 360;
+    while (a > 360) a -= 360;
+    return a;
+  }
+
+  public ProtoModule getModule(int index) {
+    return modules[index];
   }
 
   @Override

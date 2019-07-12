@@ -5,8 +5,11 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.SwerveDrive;
 
 public class Robot extends TimedRobot {
+
+  public static SwerveDrive swerveDrive;
   public static OI m_oi;
 
   Command m_autonomousCommand;
@@ -14,6 +17,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    swerveDrive = new SwerveDrive();
     m_oi = new OI();
     SmartDashboard.putData("Auto mode", m_chooser);
   }
