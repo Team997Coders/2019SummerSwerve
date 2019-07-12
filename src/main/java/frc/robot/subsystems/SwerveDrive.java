@@ -8,13 +8,14 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import frc.robot.commands.UpdateModule;
 import frc.robot.subsystems.modules.ProtoModule;
+import frc.robot.subsystems.modules.SwerveModule;
 
 /**
  * 0: Front Right 1: Front Left 2: Back Left 3: Back Right
  */
 public class SwerveDrive extends Subsystem {
 
-  private ProtoModule[] modules;
+  private SwerveModule[] modules;
   private AHRS navx;
 
   public SwerveDrive() {
@@ -90,7 +91,7 @@ public class SwerveDrive extends Subsystem {
     return a;
   }
 
-  public ProtoModule getModule(int index) {
+  public SwerveModule getModule(int index) {
     return modules[index];
   }
 

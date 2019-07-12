@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.modules.ProtoModule;
+import frc.robot.subsystems.modules.SwerveModule;
 
 public class UpdateModule extends Command {
 
@@ -28,7 +28,7 @@ public class UpdateModule extends Command {
       module().azimuthController.reset();
     }
 
-    double error = module().getError();
+    double error = module().getAzimuthError();
     double output = module().azimuthController.getOutput(0, error);
     module().setAzimuthSpeed(output);
     module().setDriveSpeed(module().getTargetSpeed());
@@ -50,7 +50,7 @@ public class UpdateModule extends Command {
     end();
   }
 
-  public ProtoModule module() {
+  public SwerveModule module() {
     return Robot.swerveDrive.getModule(moduleIndex);
   }
 

@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.MiniPID;
 import frc.robot.RobotMap;
 
-public class ProtoModule {
+public class ProtoModule extends SwerveModule {
 
   private TalonSRX azimuth, drive;
   private CANifier absoluteEncoder;
@@ -18,8 +18,6 @@ public class ProtoModule {
   private double targetSpeed = 0;
   private final double ENCODER_MAX = 1022;
   private double encoderZero;
-
-  public MiniPID azimuthController;
 
   public ProtoModule(int azimuthID, int driveID, int encoderID, double encoderZero) {
     azimuth = new TalonSRX(azimuthID);
@@ -31,14 +29,18 @@ public class ProtoModule {
     azimuthController.setOutputLimits(-1, 1);
   }
 
-  public void setTargetAngle(double targetAngle) {
-    this.targetAngle = limitRange(targetAngle, 0, 360);
+  @Override
+  public void setTargetAngle(double angle) {
+    this.targetAngle = limitRange(angle, 0, 360);
   }
 
-  public void setTargetSpeed(double a) {
-    targetSpeed = a;
+  @Override
+  public void setTargetSpeed(double speed) {
+    targetSpeed = speed;
   }
-  public double getError() {
+
+  @Override
+  public double getAzimuthError() {
     if (targetAngle == Double.MAX_VALUE) {
       return 0;
     }
@@ -54,12 +56,14 @@ public class ProtoModule {
     }
   }
 
-  public void setAzimuthSpeed(double s) {
-    azimuth.set(ControlMode.PercentOutput, s);
+  @Override
+  public void setAzimuthSpeed(double speed) {
+    azimuth.set(ControlMode.PercentOutput, speed);
   }
 
-  public void setDriveSpeed(double s) {
-    drive.set(ControlMode.PercentOutput, s);
+  @Override
+  public void setDriveSpeed(double speed) {
+    drive.set(ControlMode.PercentOutput, speed);
   }
 
   public double getRawEncoder() {
@@ -98,7 +102,9 @@ public class ProtoModule {
     return (ENCODER_MAX * val) / 360;
   }
 
+  @Override
   public double getTargetAngle() { return targetAngle; }
+  @Override
   public double getTargetSpeed() { return targetSpeed; }
 
 }
