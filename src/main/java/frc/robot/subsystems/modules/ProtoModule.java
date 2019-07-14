@@ -14,8 +14,6 @@ public class ProtoModule extends SwerveModule {
   private TalonSRX azimuth, drive;
   private CANifier absoluteEncoder;
 
-  private double targetAngle = Double.MAX_VALUE;
-  private double targetSpeed = 0;
   private final double ENCODER_MAX = 1022;
   private double encoderZero;
 
