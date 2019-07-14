@@ -22,7 +22,7 @@ public class SwerveDrive extends Subsystem {
     navx = new AHRS(Port.kUSB1);
     navx.reset();
 
-    modules = new ProtoModule[4];
+    modules = new SwerveModule[4];
 
     modules[0] = new ProtoModule(RobotMap.Ports.FrontRightAzi, RobotMap.Ports.FrontRightDrive, RobotMap.Ports.FrontRightEncoder, RobotMap.Ports.FrontRightZero);
     modules[0] = new ProtoModule(RobotMap.Ports.FrontLeftAzi, RobotMap.Ports.FrontLeftDrive, RobotMap.Ports.FrontLeftEncoder, RobotMap.Ports.FrontLeftZero);

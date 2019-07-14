@@ -6,6 +6,8 @@ public abstract class SwerveModule {
 
   public MiniPID azimuthController;
 
+  public double targetAngle = Double.MAX_VALUE, targetSpeed = 0;
+
   public abstract void setTargetAngle(double angle);
   public abstract void setTargetSpeed(double speed);
   public abstract void setAzimuthSpeed(double speed);
