@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
+import frc.robot.commands.TestBedController;
 import frc.robot.commands.UpdateModule;
 import frc.robot.subsystems.modules.ProtoModule;
 import frc.robot.subsystems.modules.SwerveModule;
@@ -19,24 +20,29 @@ public class SwerveDrive extends Subsystem {
   private AHRS navx;
 
   public SwerveDrive() {
-    navx = new AHRS(Port.kUSB1);
-    navx.reset();
 
-    modules = new SwerveModule[4];
+    try {
+      navx = new AHRS(Port.kUSB1);
+      navx.reset();
+    } catch (Exception e) {
+      System.out.println("Failed to start NavX");
+    }
 
-    modules[0] = new ProtoModule(RobotMap.Ports.FrontRightAzi, RobotMap.Ports.FrontRightDrive, RobotMap.Ports.FrontRightEncoder, RobotMap.Ports.FrontRightZero);
-    modules[0] = new ProtoModule(RobotMap.Ports.FrontLeftAzi, RobotMap.Ports.FrontLeftDrive, RobotMap.Ports.FrontLeftEncoder, RobotMap.Ports.FrontLeftZero);
-    modules[0] = new ProtoModule(RobotMap.Ports.BackLeftAzi, RobotMap.Ports.BackLeftDrive, RobotMap.Ports.BackLeftEncoder, RobotMap.Ports.BackLeftZero);
-    modules[0] = new ProtoModule(RobotMap.Ports.BackRightAzi, RobotMap.Ports.BackRightDrive, RobotMap.Ports.BackRightEncoder, RobotMap.Ports.BackRightZero);
+    modules = new SwerveModule[1];
 
-    Scheduler.getInstance().add(new UpdateModule(0));
-    Scheduler.getInstance().add(new UpdateModule(1));
-    Scheduler.getInstance().add(new UpdateModule(2));
-    Scheduler.getInstance().add(new UpdateModule(3));
+    modules[0] = new ProtoModule(0, RobotMap.Ports.FrontRightAzi, RobotMap.Ports.FrontRightDrive, RobotMap.Ports.FrontRightEncoder, RobotMap.Ports.FrontRightZero);
+    // modules[1] = new ProtoModule(1, RobotMap.Ports.FrontLeftAzi, RobotMap.Ports.FrontLeftDrive, RobotMap.Ports.FrontLeftEncoder, RobotMap.Ports.FrontLeftZero);
+    // modules[2] = new ProtoModule(2, RobotMap.Ports.BackLeftAzi, RobotMap.Ports.BackLeftDrive, RobotMap.Ports.BackLeftEncoder, RobotMap.Ports.BackLeftZero);
+    // modules[3] = new ProtoModule(3, RobotMap.Ports.BackRightAzi, RobotMap.Ports.BackRightDrive, RobotMap.Ports.BackRightEncoder, RobotMap.Ports.BackRightZero);
+
+    // Scheduler.getInstance().add(new UpdateModule(0));
+    // Scheduler.getInstance().add(new UpdateModule(1));
+    // Scheduler.getInstance().add(new UpdateModule(2));
+    // Scheduler.getInstance().add(new UpdateModule(3));
   }
 
   /**
-   * Basically 95% stolen from Jack In The Bot
+   * Basically 95% leveraged from Jack In The Bot
    */
   public void SwerveMixer(double forward, double strafe, double rotation, boolean isFieldOriented) {
     if (isFieldOriented) {
@@ -97,6 +103,6 @@ public class SwerveDrive extends Subsystem {
 
   @Override
   public void initDefaultCommand() {
-
+    setDefaultCommand(new TestBedController());
   }
 }

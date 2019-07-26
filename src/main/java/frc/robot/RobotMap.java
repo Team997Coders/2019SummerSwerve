@@ -5,15 +5,15 @@ public class RobotMap {
   public class Ports {
 
     public static final int
-      FrontRightAzi = 0,
-      FrontLeftAzi = 1,
-      BackLeftAzi = 2,
-      BackRightAzi = 3,
+      FrontRightAzi = 1,
+      FrontLeftAzi = 3,
+      BackLeftAzi = 5,
+      BackRightAzi = 7,
 
-      FrontRightDrive = 0,
-      FrontLeftDrive = 1,
-      BackLeftDrive = 2,
-      BackRightDrive = 3,
+      FrontRightDrive = 2,
+      FrontLeftDrive = 4,
+      BackLeftDrive = 6,
+      BackRightDrive = 8,
 
       FrontRightEncoder = 0,
       FrontLeftEncoder = 1,
@@ -25,9 +25,9 @@ public class RobotMap {
       BackLeftZero = 0,
       BackRightZero = 0,
 
-      LeftYJoystick = 0,
+      LeftYJoystick = 1,
       LeftXJoystick = 0,
-      RightXJoystick = 0;
+      RightXJoystick = 4;
   }
 
   public class Values {

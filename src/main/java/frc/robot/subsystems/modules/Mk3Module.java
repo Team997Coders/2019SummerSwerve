@@ -5,21 +5,29 @@ import com.ctre.phoenix.CANifier.PWMChannel;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.MiniPID;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
+
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Mk3Module extends SwerveModule {
 
   private CANSparkMax azimuth, drive;
+  private CANEncoder driveEncoder;
   private CANifier absoluteEncoder;
 
   private final double ENCODER_MAX = 1022;
   private double encoderZero;
 
-  public Mk3Module(int azimuthID, int driveID, int encoderID, double encoderZero) {
+  public Mk3Module(int ID, int azimuthID, int driveID, int encoderID, double encoderZero) {
+
+    super(ID);
+
     azimuth = new CANSparkMax(azimuthID, MotorType.kBrushless);
     drive = new CANSparkMax(driveID, MotorType.kBrushless);
+    driveEncoder = drive.getEncoder();
     absoluteEncoder = new CANifier(encoderID);
     this.encoderZero = encoderZero;
 
@@ -104,5 +112,16 @@ public class Mk3Module extends SwerveModule {
   public double getTargetAngle() { return targetAngle; }
   @Override
   public double getTargetSpeed() { return targetSpeed; }
+
+  @Override
+  public double getContributingSpeed(double direction) {
+    double robotAngle = Robot.swerveDrive.getGyroAngle();
+    double relAng = limitRange(robotAngle + getAngle(), 0, 360);
+    double porAng = relAng - direction;
+
+    
+
+    return 0;
+  }
 
 }

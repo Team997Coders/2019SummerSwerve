@@ -1,26 +1,28 @@
 package frc.robot.subsystems.modules;
 
-import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.CANifier.PWMChannel;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.MiniPID;
 import frc.robot.RobotMap;
 
 public class ProtoModule extends SwerveModule {
 
-  private TalonSRX azimuth, drive;
-  private CANifier absoluteEncoder;
+  private VictorSPX azimuth, drive;
+  private AnalogInput azimuthEncoder;
 
-  private final double ENCODER_MAX = 1022;
+  private final double ENCODER_MAX = 5;
   private double encoderZero;
 
-  public ProtoModule(int azimuthID, int driveID, int encoderID, double encoderZero) {
-    azimuth = new TalonSRX(azimuthID);
-    drive = new TalonSRX(driveID);
-    absoluteEncoder = new CANifier(encoderID);
+  public ProtoModule(int ID, int azimuthID, int driveID, int encoderID, double encoderZero) {
+
+    super(ID);
+
+    azimuth = new VictorSPX(azimuthID);
+    drive = new VictorSPX(driveID);
+    azimuthEncoder = new AnalogInput(encoderID);
     this.encoderZero = encoderZero;
 
     azimuthController = new MiniPID(RobotMap.Values.AzimuthP, RobotMap.Values.AzimuthI, RobotMap.Values.AzimuthD);
@@ -65,15 +67,17 @@ public class ProtoModule extends SwerveModule {
   }
 
   public double getRawEncoder() {
-    double[] a = new double[2];
-    absoluteEncoder.getPWMInput(PWMChannel.PWMChannel0, a);
-    SmartDashboard.putNumber("Duty Cycle", a[1]);
-    return a[0];
+    return azimuthEncoder.getVoltage();
   }
 
   public double getEncoderParsed() {
     double a = getRawEncoder() - encoderZero;
     return limitRange(a, 0, ENCODER_MAX);
+  }
+
+  @Override
+  public double getContributingSpeed(double direction) {
+    return 0;
   }
 
   public double getAngle() {
@@ -98,6 +102,12 @@ public class ProtoModule extends SwerveModule {
 
   public double angleToEncoder(double val) {
     return (ENCODER_MAX * val) / 360;
+  }
+
+  public void updateSmartDashboard() {
+    SmartDashboard.putNumber("[" + ID + "] Module Encoder", getRawEncoder());
+    SmartDashboard.putNumber("[" + ID + "] Module Angle", getAngle());
+    SmartDashboard.putNumber("[" + ID + "] Module Target Angle", getTargetAngle());
   }
 
   @Override
