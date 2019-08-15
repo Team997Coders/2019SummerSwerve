@@ -1,0 +1,9 @@
+[
+  {
+    "artifact": "frcJava (in project Sweave)",
+    "target": "roborio",
+    "debugfile": "frcJava_roborio.debugconfig",
+    "project": "Sweave",
+    "language": "java"
+  }
+]

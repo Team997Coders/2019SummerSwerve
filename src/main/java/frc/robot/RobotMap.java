@@ -20,14 +20,17 @@ public class RobotMap {
       BackLeftEncoder = 2,
       BackRightEncoder = 3,
 
-      FrontRightZero = 0,
-      FrontLeftZero = 0,
-      BackLeftZero = 0,
-      BackRightZero = 0,
+      
 
       LeftYJoystick = 1,
       LeftXJoystick = 0,
       RightXJoystick = 4;
+
+    public static final double
+      FrontRightZero = 1.07788,
+      FrontLeftZero = 0,
+      BackLeftZero = 0,
+      BackRightZero = 0;
   }
 
   public class Values {

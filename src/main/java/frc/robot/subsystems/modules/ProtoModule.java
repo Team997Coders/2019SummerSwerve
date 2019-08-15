@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.MiniPID;
 import frc.robot.RobotMap;
+import frc.robot.commands.UpdateModule;
 
 public class ProtoModule extends SwerveModule {
 
@@ -31,6 +32,7 @@ public class ProtoModule extends SwerveModule {
 
   @Override
   public void setTargetAngle(double angle) {
+    double p = limitRange(angle, 0, 360);
     this.targetAngle = limitRange(angle, 0, 360);
   }
 
@@ -41,7 +43,7 @@ public class ProtoModule extends SwerveModule {
 
   @Override
   public double getAzimuthError() {
-    if (targetAngle == Double.MAX_VALUE) {
+    if (targetAngle == 420) {
       return 0;
     }
 
@@ -49,7 +51,7 @@ public class ProtoModule extends SwerveModule {
     double error = targetAngle - current;
     if (Math.abs(error) > 180) {
       int sign = (int)(error / Math.abs(error));
-      error += 360 * -sign;
+      error += 180 * -sign;
       return error;
     } else {
       return error;
@@ -111,8 +113,18 @@ public class ProtoModule extends SwerveModule {
   }
 
   @Override
+  public void update() {
+    updateSmartDashboard();
+  }
+
+  @Override
   public double getTargetAngle() { return targetAngle; }
   @Override
   public double getTargetSpeed() { return targetSpeed; }
+
+  @Override
+  protected void initDefaultCommand() {
+    setDefaultCommand(new UpdateModule(0, this));
+  }
 
 }

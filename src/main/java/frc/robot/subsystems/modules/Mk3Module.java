@@ -124,4 +124,12 @@ public class Mk3Module extends SwerveModule {
     return 0;
   }
 
+  @Override
+  public void update() { }
+
+  @Override
+  protected void initDefaultCommand() {
+
+  }
+
 }
