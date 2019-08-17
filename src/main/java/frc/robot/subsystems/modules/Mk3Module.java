@@ -103,6 +103,7 @@ public class Mk3Module extends SwerveModule {
     return 0;
   }
 
+  @Override
   public double getAngle() {
     return encoderToAngle(getEncoderParsed(), true);
   }

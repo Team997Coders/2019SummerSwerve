@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.util.SwerveMixerData;
 
 public class SwerveDriveController extends Command {
 
@@ -17,14 +18,12 @@ public class SwerveDriveController extends Command {
 
   @Override
   protected void execute() {
-    //System.out.println("HAHAHHA");
     double forward = -Robot.m_oi.getAxis(RobotMap.Ports.LeftYJoystick);
     double strafe = Robot.m_oi.getAxis(RobotMap.Ports.LeftXJoystick);
     double rotation = Robot.m_oi.getAxis(RobotMap.Ports.RightXJoystick);
 
-    //System.out.println("JACK IN THE BOT YOU BASTARDS");
-    Robot.swerveDrive.SwerveMixer(forward, strafe, rotation, false);
-    //System.out.println("Execute");
+    SwerveMixerData smd = Robot.swerveDrive.SwerveMixer(forward, strafe, rotation, false);
+    Robot.swerveDrive.setSwerveInput(smd);
   }
 
   @Override

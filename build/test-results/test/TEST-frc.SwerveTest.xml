@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="frc.SwerveTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2019-08-17T05:26:37" hostname="DESKTOP-5N061HO" time="0.001">
+<testsuite name="frc.SwerveTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2019-08-17T19:07:53" hostname="DESKTOP-5N061HO" time="0.032">
   <properties/>
-  <testcase name="mixerTest" classname="frc.SwerveTest" time="0.001"/>
+  <testcase name="mixerTest" classname="frc.SwerveTest" time="0.032"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

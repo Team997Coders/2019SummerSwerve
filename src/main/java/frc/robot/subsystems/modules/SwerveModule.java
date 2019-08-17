@@ -22,6 +22,7 @@ public abstract class SwerveModule extends Subsystem {
   public abstract double getTargetSpeed();
   public abstract double getAzimuthError();
   public abstract double getContributingSpeed(double direction);
+  public abstract double getAngle();
 
   public abstract void update();
 
