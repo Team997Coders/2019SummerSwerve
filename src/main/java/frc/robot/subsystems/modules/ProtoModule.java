@@ -33,7 +33,28 @@ public class ProtoModule extends SwerveModule {
   @Override
   public void setTargetAngle(double angle) {
     double p = limitRange(angle, 0, 360);
-    this.targetAngle = limitRange(angle, 0, 360);
+    double current = getAngle();
+
+    double delta = current - p;
+
+    if (delta > 180) {
+      p += 360;
+    } else if (delta < -180) {
+      p -= 360;
+    }
+
+    delta = current - p;
+    if (delta > 90 || delta < -90) {
+      if (delta > 90)
+        p += 180;
+      else if (delta < -90)
+        p -= 180;
+      drive.setInverted(false); // Pretty sure this should be true and line 54 should be false. Test this later
+    } else {
+      drive.setInverted(true);
+    }
+
+    this.targetAngle = p;
   }
 
   @Override
@@ -43,14 +64,10 @@ public class ProtoModule extends SwerveModule {
 
   @Override
   public double getAzimuthError() {
-    if (targetAngle == 420) {
-      return 0;
-    }
-
     double current = getAngle();
     double error = targetAngle - current;
     if (Math.abs(error) > 180) {
-      int sign = (int)(error / Math.abs(error));
+      int sign = (int) (error / Math.abs(error));
       error += 180 * -sign;
       return error;
     } else {
@@ -87,8 +104,10 @@ public class ProtoModule extends SwerveModule {
   }
 
   public double limitRange(double a, double min, double max) {
-    while (a < min) a += max;
-    while (a > max) a -= max;
+    while (a < min)
+      a += max;
+    while (a > max)
+      a -= max;
     return a;
   }
 
@@ -118,9 +137,14 @@ public class ProtoModule extends SwerveModule {
   }
 
   @Override
-  public double getTargetAngle() { return targetAngle; }
+  public double getTargetAngle() {
+    return targetAngle;
+  }
+
   @Override
-  public double getTargetSpeed() { return targetSpeed; }
+  public double getTargetSpeed() {
+    return targetSpeed;
+  }
 
   @Override
   protected void initDefaultCommand() {

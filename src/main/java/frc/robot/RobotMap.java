@@ -1,8 +1,12 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.SerialPort;
+
 public class RobotMap {
 
-  public class Ports {
+  public static class Ports {
+
+    public static final SerialPort.Port AHRSPort = SerialPort.Port.kUSB;
 
     public static final int
       FrontRightAzi = 1,
@@ -19,8 +23,6 @@ public class RobotMap {
       FrontLeftEncoder = 1,
       BackLeftEncoder = 2,
       BackRightEncoder = 3,
-
-      
 
       LeftYJoystick = 1,
       LeftXJoystick = 0,

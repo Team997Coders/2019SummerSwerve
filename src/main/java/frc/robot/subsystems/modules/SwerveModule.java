@@ -10,7 +10,7 @@ public abstract class SwerveModule extends Subsystem {
   public MiniPID azimuthController;
 
   public int ID;
-  public double targetAngle = 420, targetSpeed = 0;
+  public double targetAngle = 0, targetSpeed = 0;
   public int mod = 1;
 
   public abstract void setTargetAngle(double angle);

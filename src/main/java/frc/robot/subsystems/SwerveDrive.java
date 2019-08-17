@@ -2,13 +2,9 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.SerialPort.Port;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import frc.robot.commands.SwerveDriveController;
-import frc.robot.commands.TestBedController;
-import frc.robot.commands.UpdateModule;
 import frc.robot.subsystems.modules.ProtoModule;
 import frc.robot.subsystems.modules.SwerveModule;
 
@@ -22,6 +18,19 @@ public class SwerveDrive extends Subsystem {
 
   public SwerveDrive() {
 
+    if (navx == null) {
+      try {
+        this.navx = new AHRS(RobotMap.Ports.AHRSPort);
+        System.out.println("ahrs is coolio!");
+        this.navx.reset();
+        this.navx.zeroYaw();
+      } catch (RuntimeException e) {
+        System.out.println("DT- The navx broke.");
+        navx = null;
+      }
+    } else {
+      this.navx.reset();
+    }
     modules = new SwerveModule[1];
 
     System.out.println("SwerveDrive");
@@ -52,15 +61,11 @@ public class SwerveDrive extends Subsystem {
     double c = forward - rotation * (RobotMap.Values.TRACKWIDTH / RobotMap.Values.WHEELBASE);
     double d = forward + rotation * (RobotMap.Values.TRACKWIDTH / RobotMap.Values.WHEELBASE);
 
-    //System.out.println("A");
-
     double[] angles = new double[] { Math.atan2(b, c) * 180 / Math.PI, Math.atan2(b, d) * 180 / Math.PI,
         Math.atan2(a, d) * 180 / Math.PI, Math.atan2(a, c) * 180 / Math.PI };
 
     double[] speeds = new double[] { Math.sqrt(b * b + c * c), Math.sqrt(b * b + d * d), Math.sqrt(a * a + d * d),
         Math.sqrt(a * a + c * c) };
-
-    //System.out.println("B");
 
     double max = speeds[0];
 
@@ -70,23 +75,13 @@ public class SwerveDrive extends Subsystem {
       }
     }
 
-    //System.out.println("C");
-
     for (int i = 0; i < 1; i++) {
-      //System.out.println("D" + i);
       if (Math.abs(forward) > 0.05 || Math.abs(strafe) > 0.05 || Math.abs(rotation) > 0.05) {
-        //System.out.println("E" + i);
         modules[i].setTargetAngle(angles[i]);
-        //System.out.println("F" + i);
-        //System.out.println("Target: " + angles[i]);
       } else {
-        //System.out.println("G" + i);
         modules[i].setTargetAngle(modules[i].getTargetAngle());
-        //System.out.println("Previou Target");
       }
       modules[i].setTargetSpeed(speeds[i]);
-      //System.out.println("E" + i);
-      //System.out.println("Speed: " + speeds[i]);
     }
   }
 
@@ -101,8 +96,9 @@ public class SwerveDrive extends Subsystem {
 
   public double getGyroAngle() {
     double a = 0;//navx.getAngle();
-    while (a < 0) a += 360;
-    while (a > 360) a -= 360;
+    a %= 360;
+    if (a < 0)
+      a += 360;
     return 0;//a;
   }
 
