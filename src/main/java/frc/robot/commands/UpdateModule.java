@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.subsystems.modules.SwerveModule;
+import frc.robot.util.SpartanAction;
 
-public class UpdateModule extends Command {
+public class UpdateModule extends SpartanAction {
 
   private final int ALIGNMENT_TIMEOUT = 1250; // Milliseconds until I start complaining
   private final double ALIGNMENT_TOLERANCE = 2.5; // Tolerance in degrees
@@ -21,15 +21,18 @@ public class UpdateModule extends Command {
     requires(s);
   }
 
+  public UpdateModule(int index) {
+    moduleIndex = index;
+  }
+
   @Override
-  protected void initialize() {
+  protected void init() {
     Robot.swerveDrive.getModule(moduleIndex).azimuthController.reset();
     lastGoodAlignment = System.currentTimeMillis();
   }
 
   @Override
-  protected void execute() {
-
+  protected void exec() {
     double target = module().getTargetAngle();
     double actual = module().getAngle();
     if (Math.abs(target - actual) <= ALIGNMENT_TOLERANCE) {
@@ -51,7 +54,7 @@ public class UpdateModule extends Command {
     double error = module().getAzimuthError();
     double output = module().azimuthController.getOutput(0, error);
     module().setAzimuthSpeed(output);
-    module().setDriveSpeed(module().getTargetSpeed() * module().mod);
+    module().setDriveSpeed(module().getTargetSpeed());
   }
 
   @Override
@@ -66,8 +69,8 @@ public class UpdateModule extends Command {
   }
 
   @Override
-  protected void interrupted() {
-    System.out.println("Interrupted");
+  protected void interrupt() {
+    System.out.println("[" + moduleIndex + "] Interrupted");
     end();
   }
 

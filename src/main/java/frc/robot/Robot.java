@@ -12,6 +12,7 @@ public class Robot extends TimedRobot {
 
   public static SwerveDrive swerveDrive;
   public static OI m_oi;
+  public static Scheduler moduleScheduler;
 
   public Watchdog w;
 
@@ -20,6 +21,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+
     swerveDrive = new SwerveDrive();
     m_oi = new OI();
     SmartDashboard.putData("Auto mode", m_chooser);
