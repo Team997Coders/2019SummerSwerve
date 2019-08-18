@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.util.SpartanReporter;
 
 public class Robot extends TimedRobot {
 
@@ -21,7 +22,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-
     swerveDrive = new SwerveDrive();
     m_oi = new OI();
     SmartDashboard.putData("Auto mode", m_chooser);
@@ -36,11 +36,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+    if (SpartanReporter.hasInstance()) SpartanReporter.getInstance().Close();
   }
 
   @Override
   public void disabledPeriodic() {
-    //Scheduler.getInstance().run();
+    Scheduler.getInstance().run();
   }
 
   @Override
@@ -50,6 +51,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.start();
     }
+
+    SpartanReporter.getInstance().AddToQueue("Starting");
   }
 
   @Override
@@ -59,20 +62,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-   
-    //if (m_autonomousCommand != null) {
-      //m_autonomousCommand.cancel();
-    //}
-    //while (true) {
-      //System.out.println("sketch");
-      //teleopPeriodic();
-    //}
+    SpartanReporter.getInstance().AddToQueue("Starting");
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
   }
 
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
-    System.out.println("Uhhhhhh good ?");
+    // System.out.println("Uhhhhhh good ?");
   }
 
   @Override

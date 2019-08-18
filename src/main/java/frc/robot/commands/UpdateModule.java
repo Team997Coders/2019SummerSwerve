@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.subsystems.modules.SwerveModule;
 import frc.robot.util.SpartanAction;
+import frc.robot.util.SpartanReporter;
 
 public class UpdateModule extends SpartanAction {
 
@@ -38,6 +39,7 @@ public class UpdateModule extends SpartanAction {
     if (Math.abs(target - actual) <= ALIGNMENT_TOLERANCE) {
       lastGoodAlignment = System.currentTimeMillis();
       SmartDashboard.putBoolean("[" + moduleIndex + "] Module Alignment Warning", true);
+      SpartanReporter.getInstance().AddToQueue("Module " + moduleIndex + " is miss aligned past timeout");
     } else {
       if (lastGoodAlignment + ALIGNMENT_TIMEOUT < System.currentTimeMillis()) {
         SmartDashboard.putBoolean("[" + moduleIndex + "] Module Alignment Warning", false);

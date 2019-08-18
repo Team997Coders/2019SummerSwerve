@@ -34,7 +34,9 @@ public class SpartanRunner {
         }
       }
 
-      try { Thread.sleep((long)(loopFrequency / 3)); } catch (Exception e) { e.printStackTrace(); }
+      double sleepTime = (lastRun + loopFrequency) - System.currentTimeMillis();
+      sleepTime = sleepTime < 0 ? 0 : sleepTime;
+      try { Thread.sleep((long)sleepTime); } catch (Exception e) { e.printStackTrace(); }
     }
 
     actions.forEach(x -> x.interrupt());
