@@ -22,7 +22,7 @@ public class SwerveDriveController extends Command {
     double strafe = Robot.m_oi.getAxis(RobotMap.Ports.LeftXJoystick);
     double rotation = Robot.m_oi.getAxis(RobotMap.Ports.RightXJoystick);
 
-    SwerveMixerData smd = Robot.swerveDrive.SwerveMixer(forward, strafe, rotation, false);
+    SwerveMixerData smd = Robot.swerveDrive.SwerveMixer(forward, strafe, rotation, true);
     Robot.swerveDrive.setSwerveInput(smd);
   }
 

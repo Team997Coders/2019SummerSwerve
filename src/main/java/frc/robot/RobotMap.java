@@ -41,9 +41,9 @@ public class RobotMap {
       WHEELBASE = 1,
       TRACKWIDTH = 1,
 
-      AzimuthP = 0.006,
+      AzimuthP = 0.01,
       AzimuthI = 0,
-      AzimuthD = 0;
+      AzimuthD = 0.0005;
   }
 
 }
