@@ -7,7 +7,10 @@ import frc.robot.util.SwerveMixerData;
 
 public class SwerveDriveController extends Command {
 
-  public SwerveDriveController() { System.out.println("HJASHJ"); requires(Robot.swerveDrive); }
+  public SwerveDriveController() {
+    System.out.println("HJASHJ");
+    requires(Robot.swerveDrive);
+  }
 
   public static boolean a = false;
 

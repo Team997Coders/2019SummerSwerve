@@ -19,7 +19,6 @@ public class Timer extends Command {
   @Override
   protected boolean isFinished() {
     if (start + s < System.currentTimeMillis()) {
-      System.out.println((char) s + " timer waiting");
       return true;
     }
     return false;
