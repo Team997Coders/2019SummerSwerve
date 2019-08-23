@@ -1,34 +1,29 @@
 package frc.robot.subsystems.modules;
 
-import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.CANifier.PWMChannel;
-
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.MiniPID;
-import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.commands.UpdateModule;
 
-import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Mk3Module extends SwerveModule {
 
   private CANSparkMax azimuth, drive;
-  private CANEncoder driveEncoder;
-  private CANifier absoluteEncoder;
+  private AnalogInput azimuthEncoder;
 
-  private final double ENCODER_MAX = 1022;
+  private final double ENCODER_MAX = 5;
   private double encoderZero;
 
   public Mk3Module(int ID, int azimuthID, int driveID, int encoderID, double encoderZero) {
-
+    
     super(ID);
 
     azimuth = new CANSparkMax(azimuthID, MotorType.kBrushless);
     drive = new CANSparkMax(driveID, MotorType.kBrushless);
-    driveEncoder = drive.getEncoder();
-    absoluteEncoder = new CANifier(encoderID);
+    azimuthEncoder = new AnalogInput(encoderID);
     this.encoderZero = encoderZero;
 
     azimuthController = new MiniPID(RobotMap.Values.AzimuthP, RobotMap.Values.AzimuthI, RobotMap.Values.AzimuthD);
@@ -37,7 +32,29 @@ public class Mk3Module extends SwerveModule {
 
   @Override
   public void setTargetAngle(double angle) {
-    this.targetAngle = limitRange(angle, 0, 360);
+    double p = limitRange(angle, 0, 360);
+    double current = getAngle();
+
+    double delta = current - p;
+
+    if (delta > 180) {
+      p += 360;
+    } else if (delta < -180) {
+      p -= 360;
+    }
+
+    delta = current - p;
+    if (delta > 90 || delta < -90) {
+      if (delta > 90)
+        p += 180;
+      else if (delta < -90)
+        p -= 180;
+      drive.setInverted(false); // Pretty sure this should be true and line 54 should be false. Test this later
+    } else {
+      drive.setInverted(true);
+    }
+
+    this.targetAngle = p;
   }
 
   @Override
@@ -47,15 +64,15 @@ public class Mk3Module extends SwerveModule {
 
   @Override
   public double getAzimuthError() {
-    if (targetAngle == Double.MAX_VALUE) {
+    if (targetAngle == 420) {
       return 0;
     }
 
     double current = getAngle();
     double error = targetAngle - current;
     if (Math.abs(error) > 180) {
-      int sign = (int)(error / Math.abs(error));
-      error += 360 * -sign;
+      int sign = (int) (error / Math.abs(error));
+      error += 180 * -sign;
       return error;
     } else {
       return error;
@@ -73,10 +90,7 @@ public class Mk3Module extends SwerveModule {
   }
 
   public double getRawEncoder() {
-    double[] a = new double[2];
-    absoluteEncoder.getPWMInput(PWMChannel.PWMChannel0, a);
-    SmartDashboard.putNumber("Duty Cycle", a[1]);
-    return a[0];
+    return azimuthEncoder.getVoltage();
   }
 
   public double getEncoderParsed() {
@@ -84,13 +98,21 @@ public class Mk3Module extends SwerveModule {
     return limitRange(a, 0, ENCODER_MAX);
   }
 
+  @Override
+  public double getContributingSpeed(double direction) {
+    return 0;
+  }
+
+  @Override
   public double getAngle() {
     return encoderToAngle(getEncoderParsed(), true);
   }
 
   public double limitRange(double a, double min, double max) {
-    while (a < min) a += max;
-    while (a > max) a -= max;
+    while (a < min)
+      a += max;
+    while (a > max)
+      a -= max;
     return a;
   }
 
@@ -108,20 +130,30 @@ public class Mk3Module extends SwerveModule {
     return (ENCODER_MAX * val) / 360;
   }
 
-  @Override
-  public double getTargetAngle() { return targetAngle; }
-  @Override
-  public double getTargetSpeed() { return targetSpeed; }
+  public void updateSmartDashboard() {
+    SmartDashboard.putNumber("[" + ID + "] Module Encoder", getRawEncoder());
+    SmartDashboard.putNumber("[" + ID + "] Module Angle", getAngle());
+    SmartDashboard.putNumber("[" + ID + "] Module Target Angle", getTargetAngle());
+  }
 
   @Override
-  public double getContributingSpeed(double direction) {
-    double robotAngle = Robot.swerveDrive.getGyroAngle();
-    double relAng = limitRange(robotAngle + getAngle(), 0, 360);
-    double porAng = relAng - direction;
+  public void update() {
+    updateSmartDashboard();
+  }
 
-    
+  @Override
+  public double getTargetAngle() {
+    return targetAngle;
+  }
 
-    return 0;
+  @Override
+  public double getTargetSpeed() {
+    return targetSpeed;
+  }
+
+  @Override
+  protected void initDefaultCommand() {
+    setDefaultCommand(new UpdateModule(0, this));
   }
 
 }

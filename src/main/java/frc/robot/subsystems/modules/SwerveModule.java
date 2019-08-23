@@ -1,15 +1,17 @@
 package frc.robot.subsystems.modules;
 
+import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.MiniPID;
 
-public abstract class SwerveModule {
+public abstract class SwerveModule extends Subsystem {
 
   public SwerveModule(int ID) { this.ID = ID; }
 
   public MiniPID azimuthController;
 
   public int ID;
-  public double targetAngle = Double.MAX_VALUE, targetSpeed = 0;
+  public double targetAngle = 5, targetSpeed = 1;
+  public int mod = 1;
 
   public abstract void setTargetAngle(double angle);
   public abstract void setTargetSpeed(double speed);
@@ -20,5 +22,8 @@ public abstract class SwerveModule {
   public abstract double getTargetSpeed();
   public abstract double getAzimuthError();
   public abstract double getContributingSpeed(double direction);
+  public abstract double getAngle();
+
+  public abstract void update();
 
 }

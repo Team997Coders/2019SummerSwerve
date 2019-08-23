@@ -6,7 +6,7 @@ import frc.robot.RobotMap;
 
 public class TestBedController extends Command {
 
-  public TestBedController() { }
+  public TestBedController() { requires(Robot.swerveDrive); }
 
   @Override
   protected void execute() {

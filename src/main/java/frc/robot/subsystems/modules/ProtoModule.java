@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.MiniPID;
 import frc.robot.RobotMap;
+import frc.robot.commands.UpdateModule;
 
 public class ProtoModule extends SwerveModule {
 
@@ -21,6 +22,7 @@ public class ProtoModule extends SwerveModule {
     super(ID);
 
     azimuth = new VictorSPX(azimuthID);
+    //azimuth.setNeutralMode(NeutralMode.Brake);
     drive = new VictorSPX(driveID);
     azimuthEncoder = new AnalogInput(encoderID);
     this.encoderZero = encoderZero;
@@ -31,7 +33,29 @@ public class ProtoModule extends SwerveModule {
 
   @Override
   public void setTargetAngle(double angle) {
-    this.targetAngle = limitRange(angle, 0, 360);
+    double p = limitRange(angle, 0, 360);
+    double current = getAngle();
+
+    double delta = current - p;
+
+    if (delta > 180) {
+      p += 360;
+    } else if (delta < -180) {
+      p -= 360;
+    }
+
+    delta = current - p;
+    if (delta > 90 || delta < -90) {
+      if (delta > 90)
+        p += 180;
+      else if (delta < -90)
+        p -= 180;
+      drive.setInverted(true); // Pretty sure this should be true and line 54 should be false. Test this later
+    } else {
+      drive.setInverted(false);
+    }
+
+    this.targetAngle = p;
   }
 
   @Override
@@ -41,15 +65,11 @@ public class ProtoModule extends SwerveModule {
 
   @Override
   public double getAzimuthError() {
-    if (targetAngle == Double.MAX_VALUE) {
-      return 0;
-    }
-
     double current = getAngle();
     double error = targetAngle - current;
     if (Math.abs(error) > 180) {
-      int sign = (int)(error / Math.abs(error));
-      error += 360 * -sign;
+      int sign = (int) (error / Math.abs(error));
+      error += 180 * -sign;
       return error;
     } else {
       return error;
@@ -80,13 +100,16 @@ public class ProtoModule extends SwerveModule {
     return 0;
   }
 
+  @Override
   public double getAngle() {
     return encoderToAngle(getEncoderParsed(), true);
   }
 
   public double limitRange(double a, double min, double max) {
-    while (a < min) a += max;
-    while (a > max) a -= max;
+    while (a < min)
+      a += max;
+    while (a > max)
+      a -= max;
     return a;
   }
 
@@ -108,11 +131,27 @@ public class ProtoModule extends SwerveModule {
     SmartDashboard.putNumber("[" + ID + "] Module Encoder", getRawEncoder());
     SmartDashboard.putNumber("[" + ID + "] Module Angle", getAngle());
     SmartDashboard.putNumber("[" + ID + "] Module Target Angle", getTargetAngle());
+    SmartDashboard.putNumber("[" + ID + "] Module Target Speed", getTargetSpeed());
   }
 
   @Override
-  public double getTargetAngle() { return targetAngle; }
+  public void update() {
+    updateSmartDashboard();
+  }
+
   @Override
-  public double getTargetSpeed() { return targetSpeed; }
+  public double getTargetAngle() {
+    return targetAngle;
+  }
+
+  @Override
+  public double getTargetSpeed() {
+    return targetSpeed;
+  }
+
+  @Override
+  protected void initDefaultCommand() {
+    setDefaultCommand(new UpdateModule(0, this));
+  }
 
 }

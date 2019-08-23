@@ -2,14 +2,12 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.SerialPort.Port;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
-import frc.robot.commands.TestBedController;
-import frc.robot.commands.UpdateModule;
+import frc.robot.commands.SwerveDriveController;
 import frc.robot.subsystems.modules.ProtoModule;
 import frc.robot.subsystems.modules.SwerveModule;
+import frc.robot.util.SwerveMixerData;
 
 /**
  * 0: Front Right 1: Front Left 2: Back Left 3: Back Right
@@ -21,30 +19,53 @@ public class SwerveDrive extends Subsystem {
 
   public SwerveDrive() {
 
-    try {
-      navx = new AHRS(Port.kUSB1);
-      navx.reset();
-    } catch (Exception e) {
-      System.out.println("Failed to start NavX");
+    if (navx == null) {
+      try {
+        this.navx = new AHRS(RobotMap.Ports.AHRSPort);
+        System.out.println("ahrs is coolio!");
+        this.navx.reset();
+        this.navx.zeroYaw();
+      } catch (RuntimeException e) {
+        System.out.println("DT- The navx broke.");
+        navx = null;
+      }
+    } else {
+      this.navx.reset();
     }
-
     modules = new SwerveModule[1];
 
-    modules[0] = new ProtoModule(0, RobotMap.Ports.FrontRightAzi, RobotMap.Ports.FrontRightDrive, RobotMap.Ports.FrontRightEncoder, RobotMap.Ports.FrontRightZero);
-    // modules[1] = new ProtoModule(1, RobotMap.Ports.FrontLeftAzi, RobotMap.Ports.FrontLeftDrive, RobotMap.Ports.FrontLeftEncoder, RobotMap.Ports.FrontLeftZero);
-    // modules[2] = new ProtoModule(2, RobotMap.Ports.BackLeftAzi, RobotMap.Ports.BackLeftDrive, RobotMap.Ports.BackLeftEncoder, RobotMap.Ports.BackLeftZero);
-    // modules[3] = new ProtoModule(3, RobotMap.Ports.BackRightAzi, RobotMap.Ports.BackRightDrive, RobotMap.Ports.BackRightEncoder, RobotMap.Ports.BackRightZero);
+    System.out.println("SwerveDrive");
 
-    // Scheduler.getInstance().add(new UpdateModule(0));
+    modules[0] = new ProtoModule(0, RobotMap.Ports.FrontRightAzi, RobotMap.Ports.FrontRightDrive,
+        RobotMap.Ports.FrontRightEncoder, RobotMap.Ports.FrontRightZero);
+    // modules[1] = new ProtoModule(1, RobotMap.Ports.FrontLeftAzi,
+    // RobotMap.Ports.FrontLeftDrive, RobotMap.Ports.FrontLeftEncoder,
+    // RobotMap.Ports.FrontLeftZero);
+    // modules[2] = new ProtoModule(2, RobotMap.Ports.BackLeftAzi,
+    // RobotMap.Ports.BackLeftDrive, RobotMap.Ports.BackLeftEncoder,
+    // RobotMap.Ports.BackLeftZero);
+    // modules[3] = new ProtoModule(3, RobotMap.Ports.BackRightAzi,
+    // RobotMap.Ports.BackRightDrive, RobotMap.Ports.BackRightEncoder,
+    // RobotMap.Ports.BackRightZero);
+    System.out.println("WHAT THE HEKKKK");
     // Scheduler.getInstance().add(new UpdateModule(1));
     // Scheduler.getInstance().add(new UpdateModule(2));
     // Scheduler.getInstance().add(new UpdateModule(3));
   }
 
+  public SwerveDrive(boolean testConstructor) {
+  }
+
   /**
    * Basically 95% leveraged from Jack In The Bot
    */
-  public void SwerveMixer(double forward, double strafe, double rotation, boolean isFieldOriented) {
+  public SwerveMixerData SwerveMixer(double forward, double strafe, double rotation, boolean isFieldOriented) {
+
+    SwerveMixerData smd = new SwerveMixerData();
+    smd.setForward(forward);
+    smd.setStrafe(strafe);
+    smd.setRotate(rotation);
+
     if (isFieldOriented) {
       double angleRad = Math.toRadians(getGyroAngle());
       double temp = forward * Math.cos(angleRad) + strafe * Math.sin(angleRad);
@@ -71,13 +92,32 @@ public class SwerveDrive extends Subsystem {
       }
     }
 
-    for (int i = 0; i < 4; i++) {
-      if (Math.abs(forward) > 0.05 || Math.abs(strafe) > 0.05 || Math.abs(rotation) > 0.05) {
-        modules[i].setTargetAngle(angles[i]);
+    double mod = 1;
+    if (max > 1) {
+      mod = 1 / max;
+
+      for (int i = 0; i < 4; i++) {
+        speeds[i] *= mod;
+
+        angles[i] %= 360;
+        if (angles[i] < 0)
+          angles[i] += 360;
+      }
+    }
+
+    smd.setAngles(angles);
+    smd.setSpeeds(speeds);
+    return smd;
+  }
+
+  public void setSwerveInput(SwerveMixerData smd) {
+    for (int i = 0; i < 1; i++) {
+      if (Math.abs(smd.getForward()) > 0.05 || Math.abs(smd.getStrafe()) > 0.05 || Math.abs(smd.getRotate()) > 0.05) {
+        modules[i].setTargetAngle(smd.getAngles()[i]);
       } else {
         modules[i].setTargetAngle(modules[i].getTargetAngle());
       }
-      modules[i].setTargetSpeed(speeds[i]);
+      modules[i].setTargetSpeed(smd.getSpeeds()[i]);
     }
   }
 
@@ -92,8 +132,9 @@ public class SwerveDrive extends Subsystem {
 
   public double getGyroAngle() {
     double a = navx.getAngle();
-    while (a < 0) a += 360;
-    while (a > 360) a -= 360;
+    a %= 360;
+    if (a < 0)
+      a += 360;
     return a;
   }
 
@@ -103,6 +144,6 @@ public class SwerveDrive extends Subsystem {
 
   @Override
   public void initDefaultCommand() {
-    setDefaultCommand(new TestBedController());
+    setDefaultCommand(new SwerveDriveController());
   }
 }
