@@ -53,13 +53,13 @@ public class SwerveDrive extends Subsystem {
     // Scheduler.getInstance().add(new UpdateModule(3));
   }
 
-  public SwerveDrive(boolean testConstructor) { }
+  public SwerveDrive(boolean testConstructor) {
+  }
 
   /**
    * Basically 95% leveraged from Jack In The Bot
    */
-  public SwerveMixerData SwerveMixer(double forward, double strafe, double rotation,
-      boolean isFieldOriented) {
+  public SwerveMixerData SwerveMixer(double forward, double strafe, double rotation, boolean isFieldOriented) {
 
     SwerveMixerData smd = new SwerveMixerData();
     smd.setForward(forward);
@@ -92,13 +92,17 @@ public class SwerveDrive extends Subsystem {
       }
     }
 
-    double mod = 1 / max;
+    double mod = 1;
+    if (max > 1) {
+      mod = 1 / max;
 
-    for (int i = 0; i < 4; i++) {
-      speeds[i] *= mod;
+      for (int i = 0; i < 4; i++) {
+        speeds[i] *= mod;
 
-      angles[i] %= 360;
-      if (angles[i] < 0) angles[i] += 360;
+        angles[i] %= 360;
+        if (angles[i] < 0)
+          angles[i] += 360;
+      }
     }
 
     smd.setAngles(angles);
@@ -118,20 +122,20 @@ public class SwerveDrive extends Subsystem {
   }
 
   public double getRawGyroAngle() {
-    double angle = 0;// navx.getAngle();
+    double angle = navx.getAngle();
     angle %= 360;
     if (angle < 0)
       angle += 360;
 
-    return 0;// angle;
+    return angle;
   }
 
   public double getGyroAngle() {
-    double a = 0;// navx.getAngle();
+    double a = navx.getAngle();
     a %= 360;
     if (a < 0)
       a += 360;
-    return 0;// a;
+    return a;
   }
 
   public SwerveModule getModule(int index) {

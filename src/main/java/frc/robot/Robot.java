@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.AUTOAHH;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.util.SpartanReporter;
 
@@ -46,7 +47,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_chooser.getSelected();
+    m_autonomousCommand = new AUTOAHH();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.start();
@@ -71,7 +72,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
-    // System.out.println("Uhhhhhh good ?");
   }
 
   @Override

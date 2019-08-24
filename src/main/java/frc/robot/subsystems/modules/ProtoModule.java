@@ -22,6 +22,7 @@ public class ProtoModule extends SwerveModule {
     super(ID);
 
     azimuth = new VictorSPX(azimuthID);
+    //azimuth.setNeutralMode(NeutralMode.Brake);
     drive = new VictorSPX(driveID);
     azimuthEncoder = new AnalogInput(encoderID);
     this.encoderZero = encoderZero;
@@ -49,9 +50,9 @@ public class ProtoModule extends SwerveModule {
         p += 180;
       else if (delta < -90)
         p -= 180;
-      drive.setInverted(false); // Pretty sure this should be true and line 54 should be false. Test this later
+      drive.setInverted(true); // Pretty sure this should be true and line 54 should be false. Test this later
     } else {
-      drive.setInverted(true);
+      drive.setInverted(false);
     }
 
     this.targetAngle = p;
@@ -130,6 +131,7 @@ public class ProtoModule extends SwerveModule {
     SmartDashboard.putNumber("[" + ID + "] Module Encoder", getRawEncoder());
     SmartDashboard.putNumber("[" + ID + "] Module Angle", getAngle());
     SmartDashboard.putNumber("[" + ID + "] Module Target Angle", getTargetAngle());
+    SmartDashboard.putNumber("[" + ID + "] Module Target Speed", getTargetSpeed());
   }
 
   @Override

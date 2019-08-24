@@ -38,6 +38,7 @@ public class SwerveTest {
         + "\nSpeed0 => " + smd.getSpeeds()[0] + "\nSpeed1 => " + smd.getSpeeds()[1]
         + "\nSpeed2 => " + smd.getSpeeds()[0] + "\nSpeed3 => " + smd.getSpeeds()[3], false);
     }
+    sd.close();
   }
 
   public boolean TestCombo(SwerveMixerData smd, double[] angles, double[] speeds) {

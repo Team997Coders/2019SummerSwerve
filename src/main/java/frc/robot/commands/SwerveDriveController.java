@@ -7,7 +7,10 @@ import frc.robot.util.SwerveMixerData;
 
 public class SwerveDriveController extends Command {
 
-  public SwerveDriveController() { System.out.println("HJASHJ"); requires(Robot.swerveDrive); }
+  public SwerveDriveController() {
+    System.out.println("HJASHJ");
+    requires(Robot.swerveDrive);
+  }
 
   public static boolean a = false;
 
@@ -22,7 +25,7 @@ public class SwerveDriveController extends Command {
     double strafe = Robot.m_oi.getAxis(RobotMap.Ports.LeftXJoystick);
     double rotation = Robot.m_oi.getAxis(RobotMap.Ports.RightXJoystick);
 
-    SwerveMixerData smd = Robot.swerveDrive.SwerveMixer(forward, strafe, rotation, false);
+    SwerveMixerData smd = Robot.swerveDrive.SwerveMixer(forward, strafe, rotation, true);
     Robot.swerveDrive.setSwerveInput(smd);
   }
 
