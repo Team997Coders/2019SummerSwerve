@@ -11,8 +11,13 @@ import frc.robot.commands.UpdateModule;
 
 public class ProtoModule extends SwerveModule {
 
+  private final int ALIGNMENT_TIMEOUT = 1250; // Milliseconds until I start complaining
+  private final double ALIGNMENT_TOLERANCE = 2.5;
+  private double lastGoodAlignment;
+
   private VictorSPX azimuth, drive;
   private AnalogInput azimuthEncoder;
+  private MiniPID azimuthController;
 
   private final double ENCODER_MAX = 5;
   private double encoderZero;
@@ -61,6 +66,24 @@ public class ProtoModule extends SwerveModule {
   @Override
   public void setTargetSpeed(double speed) {
     targetSpeed = speed;
+  }
+
+  @Override
+  public void setAzimuthAngle(double angle) {
+    double target = targetAngle;
+    double actual = getAngle();
+    if (Math.abs(target - actual) <= ALIGNMENT_TOLERANCE) {
+      lastGoodAlignment = System.currentTimeMillis();
+      SmartDashboard.putBoolean("[" + ID + "] Module Alignment Warning", true);
+    } else {
+      if (lastGoodAlignment + ALIGNMENT_TIMEOUT < System.currentTimeMillis()) {
+        SmartDashboard.putBoolean("[" + ID + "] Module Alignment Warning", false);
+      }
+    }
+
+    double error = getAzimuthError();
+    double output = azimuthController.getOutput(0, error);
+    setAzimuthSpeed(output);
   }
 
   @Override
@@ -147,6 +170,11 @@ public class ProtoModule extends SwerveModule {
   @Override
   public double getTargetSpeed() {
     return targetSpeed;
+  }
+
+  @Override
+  public void resetAzimuthController() {
+    azimuthController.reset();
   }
 
   @Override

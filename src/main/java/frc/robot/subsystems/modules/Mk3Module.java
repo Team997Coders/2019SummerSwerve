@@ -2,17 +2,25 @@ package frc.robot.subsystems.modules;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.MiniPID;
 import frc.robot.RobotMap;
 import frc.robot.commands.UpdateModule;
 
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Mk3Module extends SwerveModule {
 
+  private final int ALIGNMENT_TIMEOUT = 1250; // Milliseconds until I start complaining
+  private final double ALIGNMENT_TOLERANCE = 2.5;
+  private double lastGoodAlignment;
+
   private CANSparkMax azimuth, drive;
+  private CANEncoder azimuthInternalEncoder, driveInternalEncoder;
   private AnalogInput azimuthEncoder;
+  private CANPIDController azimuthController;
 
   private final double ENCODER_MAX = 5;
   private double encoderZero;
@@ -22,12 +30,19 @@ public class Mk3Module extends SwerveModule {
     super(ID);
 
     azimuth = new CANSparkMax(azimuthID, MotorType.kBrushless);
+    azimuthInternalEncoder = azimuth.getEncoder();
+    azimuthInternalEncoder.setPosition(0);
     drive = new CANSparkMax(driveID, MotorType.kBrushless);
+    driveInternalEncoder = drive.getEncoder();
+    driveInternalEncoder.setPosition(0);
     azimuthEncoder = new AnalogInput(encoderID);
     this.encoderZero = encoderZero;
 
-    azimuthController = new MiniPID(RobotMap.Values.AzimuthP, RobotMap.Values.AzimuthI, RobotMap.Values.AzimuthD);
-    azimuthController.setOutputLimits(-1, 1);
+    azimuthController = azimuth.getPIDController();
+    azimuthController.setP(RobotMap.Values.AzimuthP);
+    azimuthController.setP(RobotMap.Values.AzimuthI);
+    azimuthController.setP(RobotMap.Values.AzimuthD);
+    azimuthController.setOutputRange(-1, 1);
   }
 
   @Override
@@ -49,9 +64,9 @@ public class Mk3Module extends SwerveModule {
         p += 180;
       else if (delta < -90)
         p -= 180;
-      drive.setInverted(false); // Pretty sure this should be true and line 54 should be false. Test this later
+      drive.setInverted(true); // Pretty sure this should be true and line 54 should be false. Test this later
     } else {
-      drive.setInverted(true);
+      drive.setInverted(false);
     }
 
     this.targetAngle = p;
@@ -63,11 +78,25 @@ public class Mk3Module extends SwerveModule {
   }
 
   @Override
-  public double getAzimuthError() {
-    if (targetAngle == 420) {
-      return 0;
+  public void setAzimuthAngle(double angle) {
+    double target = targetAngle;
+    double actual = getAngle();
+    if (Math.abs(target - actual) <= ALIGNMENT_TOLERANCE) {
+      lastGoodAlignment = System.currentTimeMillis();
+      SmartDashboard.putBoolean("[" + ID + "] Module Alignment Warning", true);
+    } else {
+      if (lastGoodAlignment + ALIGNMENT_TIMEOUT < System.currentTimeMillis()) {
+        SmartDashboard.putBoolean("[" + ID + "] Module Alignment Warning", false);
+      }
     }
 
+    double error = getAzimuthError();
+    azimuthInternalEncoder.setPosition(0);
+    azimuthController.setReference(error, ControlType.kPosition);
+  }
+
+  @Override
+  public double getAzimuthError() {
     double current = getAngle();
     double error = targetAngle - current;
     if (Math.abs(error) > 180) {
@@ -134,6 +163,7 @@ public class Mk3Module extends SwerveModule {
     SmartDashboard.putNumber("[" + ID + "] Module Encoder", getRawEncoder());
     SmartDashboard.putNumber("[" + ID + "] Module Angle", getAngle());
     SmartDashboard.putNumber("[" + ID + "] Module Target Angle", getTargetAngle());
+    SmartDashboard.putNumber("[" + ID + "] Module Target Speed", getTargetSpeed());
   }
 
   @Override
@@ -149,6 +179,11 @@ public class Mk3Module extends SwerveModule {
   @Override
   public double getTargetSpeed() {
     return targetSpeed;
+  }
+
+  @Override
+  public void resetAzimuthController() {
+    azimuthController.setIAccum(0);
   }
 
   @Override
