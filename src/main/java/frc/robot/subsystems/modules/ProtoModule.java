@@ -32,7 +32,8 @@ public class ProtoModule extends SwerveModule {
     azimuthEncoder = new AnalogInput(encoderID);
     this.encoderZero = encoderZero;
 
-    azimuthController = new MiniPID(RobotMap.Values.AzimuthP, RobotMap.Values.AzimuthI, RobotMap.Values.AzimuthD);
+    azimuthController = new MiniPID(RobotMap.Values.ProtoP,
+      RobotMap.Values.ProtoI, RobotMap.Values.ProtoD);
     azimuthController.setOutputLimits(-1, 1);
   }
 

@@ -1,7 +1,6 @@
 package frc.robot.subsystems.modules;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.robot.MiniPID;
 
 public abstract class SwerveModule extends Subsystem {
 

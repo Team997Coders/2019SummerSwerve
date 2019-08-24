@@ -39,9 +39,9 @@ public class Mk3Module extends SwerveModule {
     this.encoderZero = encoderZero;
 
     azimuthController = azimuth.getPIDController();
-    azimuthController.setP(RobotMap.Values.AzimuthP);
-    azimuthController.setP(RobotMap.Values.AzimuthI);
-    azimuthController.setP(RobotMap.Values.AzimuthD);
+    azimuthController.setP(RobotMap.Values.Mk3P);
+    azimuthController.setP(RobotMap.Values.Mk3I);
+    azimuthController.setP(RobotMap.Values.Mk3D);
     azimuthController.setOutputRange(-1, 1);
   }
 
