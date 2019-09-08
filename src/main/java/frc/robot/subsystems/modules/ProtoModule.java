@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.MiniPID;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.UpdateModule;
 
@@ -151,7 +152,8 @@ public class ProtoModule extends SwerveModule {
 
   @Override
   protected void initDefaultCommand() {
-    setDefaultCommand(new UpdateModule(0, this));
+    //setDefaultCommand(new UpdateModule(0, this));
+    Robot.moduleRunner.AddAction(new UpdateModule(ID, this));
   }
 
 }

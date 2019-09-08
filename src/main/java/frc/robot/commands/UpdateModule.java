@@ -60,7 +60,7 @@ public class UpdateModule extends SpartanAction {
   }
 
   @Override
-  protected boolean isFinished() {
+  protected boolean isDone() {
     return false;
   }
 

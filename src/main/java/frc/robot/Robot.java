@@ -9,12 +9,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.AUTOAHH;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.util.SpartanReporter;
+import frc.robot.util.SpartanRunner;
 
 public class Robot extends TimedRobot {
 
   public static SwerveDrive swerveDrive;
   public static OI m_oi;
-  public static Scheduler moduleScheduler;
+  public static SpartanRunner moduleRunner;
 
   public Watchdog w;
 
@@ -23,6 +24,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+
+    moduleRunner = new SpartanRunner(20 /* Custom loop time for runner */);
+
     swerveDrive = new SwerveDrive();
     m_oi = new OI();
     SmartDashboard.putData("Auto mode", m_chooser);

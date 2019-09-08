@@ -30,7 +30,8 @@ public class SpartanRunner {
               x.hasInit = true;
             }
           });
-          actions.forEach(x -> x.exec());
+          actions.forEach(x -> { x.exec(); if (x.isDone()) x.interrupt(); });
+          actions.removeIf(x -> x.ended);
         }
       }
 
@@ -45,6 +46,10 @@ public class SpartanRunner {
 
   public void Stop() {
     halt = true;
+  }
+
+  public void AddAction(SpartanAction action) {
+    actions.add(action);
   }
 
 }
