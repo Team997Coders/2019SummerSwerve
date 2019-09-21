@@ -7,6 +7,7 @@ import frc.robot.RobotMap;
 import frc.robot.commands.SwerveDriveController;
 import frc.robot.subsystems.modules.ProtoModule;
 import frc.robot.subsystems.modules.SwerveModule;
+import frc.robot.util.Pair;
 import frc.robot.util.SwerveMixerData;
 
 /**
@@ -37,7 +38,7 @@ public class SwerveDrive extends Subsystem {
     System.out.println("SwerveDrive");
 
     modules[0] = new ProtoModule(0, RobotMap.Ports.FrontRightAzi, RobotMap.Ports.FrontRightDrive,
-        RobotMap.Ports.FrontRightEncoder, RobotMap.Ports.FrontRightZero);
+        RobotMap.Ports.FrontRightEncoder, RobotMap.Ports.FrontRightZero, new Pair<Integer,Integer>(0, 1));
     // modules[1] = new ProtoModule(1, RobotMap.Ports.FrontLeftAzi,
     // RobotMap.Ports.FrontLeftDrive, RobotMap.Ports.FrontLeftEncoder,
     // RobotMap.Ports.FrontLeftZero);
@@ -114,6 +115,17 @@ public class SwerveDrive extends Subsystem {
       }
       modules[i].setTargetSpeed(smd.getSpeeds()[i]);
     }
+  }
+
+  public void OdometryStep() {
+    Pair<Double, Double> sumVect = new Pair<Double,Double>(0.0, 0.0);
+    Pair<Double, Double> vect;
+    for (SwerveModule mod : modules) {
+      vect = mod.getVector();
+      sumVect = new Pair<Double,Double>(sumVect.x + vect.x, sumVect.y + vect.y);
+    }
+
+    vect = new Pair<Double,Double>(sumVect.x / modules.length, sumVect.y / modules.length);
   }
 
   public double getRawGyroAngle() {

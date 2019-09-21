@@ -2,10 +2,13 @@ package frc.robot.subsystems.modules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import frc.robot.util.Pair;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.MiniPID;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.UpdateModule;
 
@@ -17,12 +20,13 @@ public class ProtoModule extends SwerveModule {
 
   private VictorSPX azimuth, drive;
   private AnalogInput azimuthEncoder;
+  private Encoder driveEncoder;
   private MiniPID azimuthController;
 
   private final double ENCODER_MAX = 5;
   private double encoderZero;
 
-  public ProtoModule(int ID, int azimuthID, int driveID, int encoderID, double encoderZero) {
+  public ProtoModule(int ID, int azimuthID, int driveID, int encoderID, double encoderZero, Pair<Integer, Integer> driveChannels) {
 
     super(ID);
 
@@ -30,6 +34,9 @@ public class ProtoModule extends SwerveModule {
     //azimuth.setNeutralMode(NeutralMode.Brake);
     drive = new VictorSPX(driveID);
     azimuthEncoder = new AnalogInput(encoderID);
+    driveEncoder = new Encoder(driveChannels.x, driveChannels.y);
+    driveEncoder.reset();
+
     this.encoderZero = encoderZero;
 
     azimuthController = new MiniPID(RobotMap.Values.ProtoP,
@@ -176,6 +183,30 @@ public class ProtoModule extends SwerveModule {
   @Override
   public void resetAzimuthController() {
     azimuthController.reset();
+  }
+
+  @Override
+  public Pair<Double, Double> getVector() {
+    
+    double theta = getAngle() + Robot.swerveDrive.getGyroAngle();
+    theta = limitRange(theta, 0, 360);
+    double speed = driveEncoder.getRate();
+
+    double x = speed * Math.sin(theta);
+    double y = speed * Math.cos(theta);
+
+    if (theta > 90 && theta <= 180) {
+      y = -y;
+    } else if (theta > 180 && theta <= 270) {
+      y = -y;
+      x = -x;
+    } else if (theta > 270) {
+      x = -x;
+    }
+
+    Pair<Double, Double> v = new Pair<Double,Double>(x, y);
+
+    return v;
   }
 
   @Override

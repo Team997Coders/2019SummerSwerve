@@ -2,8 +2,10 @@ package frc.robot.subsystems.modules;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.UpdateModule;
+import frc.robot.util.Pair;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -184,6 +186,30 @@ public class Mk3Module extends SwerveModule {
   @Override
   public void resetAzimuthController() {
     azimuthController.setIAccum(0);
+  }
+
+  @Override
+  public Pair<Double, Double> getVector() {
+    // TO-DO: Take robot orientation into account
+    double theta = getAngle() + Robot.swerveDrive.getGyroAngle();
+    theta = limitRange(theta, 0, 360);
+    double speed = driveInternalEncoder.getVelocity();
+
+    double x = speed * Math.sin(theta);
+    double y = speed * Math.cos(theta);
+
+    if (theta > 90 && theta <= 180) {
+      y = -y;
+    } else if (theta > 180 && theta <= 270) {
+      y = -y;
+      x = -x;
+    } else if (theta > 270) {
+      x = -x;
+    }
+
+    Pair<Double, Double> v = new Pair<Double,Double>(x, y);
+
+    return v;
   }
 
   @Override

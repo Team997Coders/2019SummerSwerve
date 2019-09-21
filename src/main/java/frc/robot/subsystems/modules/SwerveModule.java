@@ -1,6 +1,7 @@
 package frc.robot.subsystems.modules;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.util.Pair;
 
 public abstract class SwerveModule extends Subsystem {
 
@@ -21,6 +22,7 @@ public abstract class SwerveModule extends Subsystem {
   public abstract double getAzimuthError();
   public abstract double getContributingSpeed(double direction);
   public abstract double getAngle();
+  public abstract Pair<Double, Double> getVector();
 
   public abstract void resetAzimuthController();
 
