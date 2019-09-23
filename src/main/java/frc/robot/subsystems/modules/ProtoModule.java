@@ -2,6 +2,7 @@ package frc.robot.subsystems.modules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,9 +22,9 @@ public class ProtoModule extends SwerveModule {
 
     super(ID);
 
-    azimuth = new VictorSPX(azimuthID);
+    azimuth = new WPI_VictorSPX(azimuthID);
     //azimuth.setNeutralMode(NeutralMode.Brake);
-    drive = new VictorSPX(driveID);
+    drive = new WPI_VictorSPX(driveID);
     azimuthEncoder = new AnalogInput(encoderID);
     this.encoderZero = encoderZero;
 

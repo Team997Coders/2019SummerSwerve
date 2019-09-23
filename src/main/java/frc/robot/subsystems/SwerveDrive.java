@@ -8,6 +8,10 @@ import frc.robot.commands.SwerveDriveController;
 import frc.robot.subsystems.modules.ProtoModule;
 import frc.robot.subsystems.modules.SwerveModule;
 import frc.robot.util.SwerveMixerData;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.Waypoint;
+import jaci.pathfinder.modifiers.SwerveModifier;
 
 /**
  * 0: Front Right 1: Front Left 2: Back Left 3: Back Right
@@ -140,6 +144,33 @@ public class SwerveDrive extends Subsystem {
 
   public SwerveModule getModule(int index) {
     return modules[index];
+  }
+
+  public void PathFinderStuff() {
+    Waypoint a = new Waypoint(0, 0, 0);
+    Waypoint b = new Waypoint(5, 0, 0);
+
+    Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
+        0.05, 2, 6, 60);
+
+    Trajectory traj = Pathfinder.generate(new Waypoint[] { a, b }, config);
+
+    // The swerve mode to generate will be the 'default' mode, where the
+    // robot will constantly be facing forward and 'sliding' sideways to
+    // follow a curved path.
+    SwerveModifier.Mode mode = SwerveModifier.Mode.SWERVE_DEFAULT;
+
+    // Create the Modifier Object
+    SwerveModifier modifier = new SwerveModifier(traj);
+
+    // Generate the individual wheel trajectories using the original trajectory
+    // as the centre
+    modifier.modify(RobotMap.Values.TRACKWIDTH, RobotMap.Values.WHEELBASE, mode);
+
+    Trajectory fl = modifier.getFrontLeftTrajectory(); // Get the Front Left wheel
+    Trajectory fr = modifier.getFrontRightTrajectory(); // Get the Front Right wheel
+    Trajectory bl = modifier.getBackLeftTrajectory(); // Get the Back Left wheel
+    Trajectory br = modifier.getBackRightTrajectory(); // Get the Back Right wheel
   }
 
   @Override
