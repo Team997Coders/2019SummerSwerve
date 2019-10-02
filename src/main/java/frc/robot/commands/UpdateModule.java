@@ -2,19 +2,19 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.subsystems.modules.SwerveModule;
 
 public class UpdateModule extends Command {
 
-  private final int ALIGNMENT_TIMEOUT = 1250; // Milliseconds until I start complaining
-  private final double ALIGNMENT_TOLERANCE = 2.5; // Tolerance in degrees
+  // private final int ALIGNMENT_TIMEOUT = 1250; // Milliseconds until I start complaining
+  // private final double ALIGNMENT_TOLERANCE = 2.5; // Tolerance in degrees
 
   private int moduleIndex;
 
   // private double lastTargetAngle = 0;
-  private double lastGoodAlignment;
+  // private double lastGoodAlignment;
 
   public UpdateModule(int index, Subsystem s) {
     moduleIndex = index;
@@ -24,7 +24,7 @@ public class UpdateModule extends Command {
   @Override
   protected void initialize() {
     Robot.swerveDrive.getModule(moduleIndex).azimuthController.reset();
-    lastGoodAlignment = System.currentTimeMillis();
+    // lastGoodAlignment = System.currentTimeMillis();
   }
 
   @Override
