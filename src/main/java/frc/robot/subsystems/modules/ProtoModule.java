@@ -11,6 +11,10 @@ import frc.robot.commands.UpdateModule;
 
 public class ProtoModule extends SwerveModule {
 
+  private final int ALIGNMENT_TIMEOUT = 1250; // Milliseconds until I start complaining
+  private final double ALIGNMENT_TOLERANCE = 2.5; // Tolerance in degrees
+  private double lastGoodAlignment;
+
   private VictorSPX azimuth, drive;
   private AnalogInput azimuthEncoder;
 
@@ -127,6 +131,7 @@ public class ProtoModule extends SwerveModule {
     return (ENCODER_MAX * val) / 360;
   }
 
+  @Override
   public void updateSmartDashboard() {
     SmartDashboard.putNumber("[" + ID + "] Module Encoder", getRawEncoder());
     SmartDashboard.putNumber("[" + ID + "] Module Angle", getAngle());
@@ -136,7 +141,21 @@ public class ProtoModule extends SwerveModule {
 
   @Override
   public void update() {
-    updateSmartDashboard();
+    double target = getTargetAngle();
+    double actual = getAngle();
+    if (Math.abs(target - actual) <= ALIGNMENT_TOLERANCE) {
+      lastGoodAlignment = System.currentTimeMillis();
+      SmartDashboard.putBoolean("[" + ID + "] Module Alignment Warning", true);
+    } else {
+      if (lastGoodAlignment + ALIGNMENT_TIMEOUT < System.currentTimeMillis()) {
+        SmartDashboard.putBoolean("[" + ID + "] Module Alignment Warning", false);
+      }
+    }
+
+    double error = getAzimuthError();
+    double output = azimuthController.getOutput(0, error);
+    setAzimuthSpeed(output);
+    setDriveSpeed(getTargetSpeed());
   }
 
   @Override

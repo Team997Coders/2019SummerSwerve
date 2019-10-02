@@ -4,6 +4,9 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
+/**
+ * @deprecated Just for verifiying that the module spins
+ */
 public class TestBedController extends Command {
 
   public TestBedController() { requires(Robot.swerveDrive); }
@@ -13,8 +16,8 @@ public class TestBedController extends Command {
     double drive = -Robot.m_oi.getAxis(RobotMap.Ports.LeftYJoystick);
     double spin = Robot.m_oi.getAxis(RobotMap.Ports.RightXJoystick);
 
-    Robot.swerveDrive.getModule(0).setAzimuthSpeed(spin);
-    Robot.swerveDrive.getModule(0).setDriveSpeed(drive);
+    // Robot.swerveDrive.getModule(0).setAzimuthSpeed(spin);
+    // Robot.swerveDrive.getModule(0).setDriveSpeed(drive);
   }
 
   @Override

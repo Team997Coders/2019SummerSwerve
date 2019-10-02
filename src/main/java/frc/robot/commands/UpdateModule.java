@@ -30,7 +30,9 @@ public class UpdateModule extends Command {
   @Override
   protected void execute() {
 
-    double target = module().getTargetAngle();
+    module().update();
+
+    /* double target = module().getTargetAngle();
     double actual = module().getAngle();
     if (Math.abs(target - actual) <= ALIGNMENT_TOLERANCE) {
       lastGoodAlignment = System.currentTimeMillis();
@@ -39,7 +41,7 @@ public class UpdateModule extends Command {
       if (lastGoodAlignment + ALIGNMENT_TIMEOUT < System.currentTimeMillis()) {
         SmartDashboard.putBoolean("[" + moduleIndex + "] Module Alignment Warning", false);
       }
-    }
+    } */
 
     //System.out.println("Target: " + target);
 
@@ -48,10 +50,10 @@ public class UpdateModule extends Command {
       lastTargetAngle = target;
     }*/
 
-    double error = module().getAzimuthError();
+    /* double error = module().getAzimuthError();
     double output = module().azimuthController.getOutput(0, error);
     module().setAzimuthSpeed(output);
-    module().setDriveSpeed(module().getTargetSpeed() * module().mod);
+    module().setDriveSpeed(module().getTargetSpeed() * module().mod); */
   }
 
   @Override
@@ -61,8 +63,8 @@ public class UpdateModule extends Command {
 
   @Override
   protected void end() {
-    module().setAzimuthSpeed(0);
-    module().setTargetSpeed(0);
+    // module().setAzimuthSpeed(0);
+    // module().setTargetSpeed(0);
   }
 
   @Override
