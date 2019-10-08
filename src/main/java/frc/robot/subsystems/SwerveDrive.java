@@ -48,9 +48,6 @@ public class SwerveDrive extends Subsystem {
     // RobotMap.Ports.BackRightDrive, RobotMap.Ports.BackRightEncoder,
     // RobotMap.Ports.BackRightZero);
     System.out.println("WHAT THE HEKKKK");
-    // Scheduler.getInstance().add(new UpdateModule(1));
-    // Scheduler.getInstance().add(new UpdateModule(2));
-    // Scheduler.getInstance().add(new UpdateModule(3));
   }
 
   public SwerveDrive(boolean testConstructor) {
