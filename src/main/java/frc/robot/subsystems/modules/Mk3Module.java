@@ -64,10 +64,6 @@ public class Mk3Module extends SwerveModule {
 
   @Override
   public double getAzimuthError() {
-    if (targetAngle == 420) {
-      return 0;
-    }
-
     double current = getAngle();
     double error = targetAngle - current;
     if (Math.abs(error) > 180) {

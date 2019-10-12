@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.AUTOAHH;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.util.SpartanReporter;
 import frc.robot.util.SpartanRunner;
@@ -26,8 +25,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
 
     moduleRunner = new SpartanRunner(20 /* Custom loop time for runner */);
-
     swerveDrive = new SwerveDrive();
+
     m_oi = new OI();
     SmartDashboard.putData("Auto mode", m_chooser);
     
@@ -36,7 +35,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    swerveDrive.getModule(0).update();
+    for (int i = 0; i < swerveDrive.getModules().length; i++) swerveDrive.getModules()[i].updateSmartDashboard();
   }
 
   @Override
@@ -51,8 +50,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = new AUTOAHH();
-
     if (m_autonomousCommand != null) {
       m_autonomousCommand.start();
     }

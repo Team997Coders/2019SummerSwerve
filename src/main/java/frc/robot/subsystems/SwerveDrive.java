@@ -108,7 +108,7 @@ public class SwerveDrive extends Subsystem {
   }
 
   public void setSwerveInput(SwerveMixerData smd) {
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < modules.length; i++) {
       if (Math.abs(smd.getForward()) > 0.05 || Math.abs(smd.getStrafe()) > 0.05 || Math.abs(smd.getRotate()) > 0.05) {
         modules[i].setTargetAngle(smd.getAngles()[i]);
       } else {
@@ -116,6 +116,10 @@ public class SwerveDrive extends Subsystem {
       }
       modules[i].setTargetSpeed(smd.getSpeeds()[i]);
     }
+  }
+
+  public void updateSmartDashboard() {
+    for (SwerveModule mod : modules) mod.updateSmartDashboard();
   }
 
   public double getRawGyroAngle() {
@@ -138,6 +142,8 @@ public class SwerveDrive extends Subsystem {
   public SwerveModule getModule(int index) {
     return modules[index];
   }
+
+  public SwerveModule[] getModules() { return modules; }
 
   @Override
   public void initDefaultCommand() {
