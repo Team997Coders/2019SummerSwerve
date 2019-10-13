@@ -25,12 +25,17 @@ public class SpartanRunner {
         lastRun = System.currentTimeMillis();
         if (actions.size() > 0) {
           actions.forEach(x -> {
+
             if (!x.hasInit) {
               x.init();
               x.hasInit = true;
             }
+            x.exec();
+            if (x.isDone()) {
+              x.interrupt(); x.ended = true;
+            }
+
           });
-          actions.forEach(x -> { x.exec(); if (x.isDone()) x.interrupt(); });
           actions.removeIf(x -> x.ended);
         }
       }
