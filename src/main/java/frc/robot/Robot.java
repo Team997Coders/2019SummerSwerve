@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    if (SpartanReporter.hasInstance()) SpartanReporter.getInstance().Close();
+    //if (SpartanReporter.hasInstance()) SpartanReporter.getInstance().Close();
   }
 
   @Override
@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.start();
     }
 
-    SpartanReporter.getInstance().AddToQueue("Starting");
+    //SpartanReporter.getInstance().AddToQueue("Starting");
   }
 
   @Override
@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    SpartanReporter.getInstance().AddToQueue("Starting");
+    //SpartanReporter.getInstance().AddToQueue("Starting");
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

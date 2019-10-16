@@ -27,6 +27,7 @@ public class ProtoModule extends SwerveModule {
     super(ID);
 
     azimuth = new VictorSPX(azimuthID);
+    azimuth.setInverted(true);
     //azimuth.setNeutralMode(NeutralMode.Brake);
     drive = new VictorSPX(driveID);
     azimuthEncoder = new AnalogInput(encoderID);
